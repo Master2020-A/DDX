@@ -1,0 +1,35 @@
+{
+  "name": "@ddx/sdk",
+  "version": "1.0.0",
+  "description": "SDK oficial de JavaScript/TypeScript para la API de DDX",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "ddx",
+    "healthcare",
+    "medical",
+    "api",
+    "sdk"
+  ],
+  "author": "DDX Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ddx/sdk-javascript"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
+}

@@ -1,0 +1,154 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║           CORRECCIÓN RÁPIDA: Soporte NIfTI en Frontend                      ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+📁 ARCHIVO A EDITAR: frontend/src/pages/GaleriaImagenes.tsx
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✏️ CAMBIO 1: Actualizar selector de archivos (línea ~837)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+BUSCAR:
+    accept="image/*,.dcm"
+
+REEMPLAZAR CON:
+    accept="image/*,.dcm,.nii,.nii.gz,application/x-nifti,application/gzip"
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✏️ CAMBIO 2: Actualizar handleFileChange (línea ~740-754)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+BUSCAR:
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0]
+      setArchivoSeleccionado(file)
+      
+      // Limpiar preview anterior
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl)
+      }
+      
+      // Crear nueva URL de vista previa
+      const newPreviewUrl = URL.createObjectURL(file)
+      setPreviewUrl(newPreviewUrl)
+    }
+  }
+
+REEMPLAZAR CON:
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0]
+      setArchivoSeleccionado(file)
+      
+      // Limpiar preview anterior
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl)
+      }
+      
+      // Detectar si es archivo NIfTI
+      const esNifti = file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')
+      
+      if (esNifti) {
+        // Para archivos NIfTI, usar placeholder
+        setPreviewUrl('nifti-placeholder')
+      } else {
+        // Para imágenes normales, crear URL de vista previa
+        const newPreviewUrl = URL.createObjectURL(file)
+        setPreviewUrl(newPreviewUrl)
+      }
+    }
+  }
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✏️ CAMBIO 3: Actualizar preview del archivo (línea ~790-812)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+BUSCAR:
+            {previewUrl && (
+              <div className="relative rounded-lg overflow-hidden bg-black">
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  className="w-full h-64 object-contain"
+                />
+                <button
+                  onClick={() => {
+                    setArchivoSeleccionado(null)
+                    if (previewUrl) {
+                      URL.revokeObjectURL(previewUrl)
+                      setPreviewUrl(null)
+                    }
+                  }}
+                  className="absolute top-3 right-3 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors shadow-lg"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+
+REEMPLAZAR CON:
+            {previewUrl && (
+              <div className="relative rounded-lg overflow-hidden bg-black">
+                {previewUrl === 'nifti-placeholder' ? (
+                  <div className="w-full h-64 flex flex-col items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 text-white">
+                    <svg className="w-24 h-24 mb-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <p className="text-lg font-semibold mb-1">🧠 Archivo NIfTI 3D</p>
+                    <p className="text-sm text-gray-400">{archivoSeleccionado?.name}</p>
+                    <p className="text-xs text-gray-500 mt-2">El preview se generará después de subir</p>
+                  </div>
+                ) : (
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    className="w-full h-64 object-contain"
+                  />
+                )}
+                <button
+                  onClick={() => {
+                    setArchivoSeleccionado(null)
+                    if (previewUrl && previewUrl !== 'nifti-placeholder') {
+                      URL.revokeObjectURL(previewUrl)
+                    }
+                    setPreviewUrl(null)
+                  }}
+                  className="absolute top-3 right-3 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors shadow-lg"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🎯 CAMBIO MÍNIMO (si solo quieres que funcione):
+
+Si solo quieres que funcione sin el preview bonito, SOLO haz el CAMBIO 1:
+
+    accept="image/*,.dcm,.nii,.nii.gz"
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ DESPUÉS DE LOS CAMBIOS:
+
+1. Guardar el archivo
+2. El frontend se recargará automáticamente (si vite está corriendo)
+3. Abrir modal de "Subir Imagen"
+4. ¡Los archivos .nii y .nii.gz aparecerán en el selector!
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🐛 SI PERSISTE EL ERROR AL SUBIR:
+
+Verificar que el backend esté corriendo con las actualizaciones:
+
+    cd C:\Users\Master\Documents\DDX\backend
+    conda activate ddx
+    uvicorn app.main:app --reload --port 8612
+
+═══════════════════════════════════════════════════════════════════════════════

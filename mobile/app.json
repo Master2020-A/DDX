@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "DDX Portal Paciente",
+    "slug": "ddx-portal-paciente",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#4F46E5"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ddx.portalPaciente"
+    },
+    "android": {
+      "package": "com.ddx.portalPaciente",
+      "permissions": [
+        "USE_BIOMETRIC",
+        "USE_FINGERPRINT",
+        "CAMERA",
+        "NOTIFICATIONS"
+      ],
+      "adaptiveIcon": {
+        "backgroundColor": "#4F46E5"
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "96384371-302d-45c2-8fec-c9d7c8cfd22a"
+      }
+    }
+  }
+}

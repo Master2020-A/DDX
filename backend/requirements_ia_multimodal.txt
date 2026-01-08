@@ -1,0 +1,53 @@
+# ============================================================================
+# DEPENDENCIAS PARA SISTEMA MULTI-MODAL DE IA MÉDICA
+# ============================================================================
+
+# ===== CORE FRAMEWORKS =====
+torch>=2.0.0
+torchvision>=0.15.0
+pillow>=10.0.0
+numpy>=1.24.0
+scipy>=1.10.0
+scikit-image>=0.21.0
+opencv-python>=4.8.0
+
+# ===== MONAI - Medical Open Network for AI =====
+monai>=1.3.0
+
+# ===== TorchXRayVision - Rayos X Tórax =====
+torchxrayvision>=1.2.0
+
+# ===== Procesamiento de DICOM =====
+pydicom>=2.4.0
+nibabel>=5.1.0  # Para MRI/CT en formato NIfTI
+
+# ===== Transformers (Hugging Face) - Modelos pre-entrenados =====
+transformers>=4.35.0
+
+# ===== Segmentación y Detección =====
+# SimpleITK para procesamiento de imágenes médicas 3D
+SimpleITK>=2.3.0
+
+# ===== Modelos Específicos =====
+# MedSAM - Segment Anything for Medical Images
+# segment-anything>=1.0  # Opcional si quieres segmentación avanzada
+
+# ===== Utilidades =====
+tqdm>=4.65.0  # Barras de progreso
+requests>=2.31.0  # Para descargar modelos
+
+# ===== Generación de Reportes PDF =====
+reportlab>=4.0.0
+fpdf2>=2.7.0
+
+# ===== IMPORTANTE =====
+# Algunos modelos son muy pesados (>1GB)
+# Se descargarán automáticamente al primer uso
+# Asegúrate de tener suficiente espacio en disco
+
+# ===== INSTALACIÓN =====
+# pip install -r requirements_ia_multimodal.txt
+
+# ===== NOTA SOBRE GPU =====
+# Para mejor rendimiento, instalar PyTorch con CUDA:
+# pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118

@@ -1,0 +1,96 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  body {
+    @apply text-executive-900 antialiased;
+    background: linear-gradient(180deg, rgba(248,250,252,1) 0%, rgba(255,255,255,1) 40%, rgba(255,255,255,1) 100%);
+    font-feature-settings: "ss01" on, "ss02" on;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500;
+  }
+
+  .btn-primary {
+    @apply bg-primary-600 text-white shadow-lg shadow-primary-600/30 hover:bg-primary-500 focus-visible:ring-offset-white;
+  }
+
+  .btn-secondary {
+    @apply border border-executive-100 bg-white/85 text-executive-700 shadow-sm hover:bg-white focus-visible:ring-offset-white;
+  }
+
+  .btn-danger {
+    @apply bg-danger-600 text-white hover:bg-danger-500 focus-visible:ring-danger-500;
+  }
+
+  .btn-ghost {
+    @apply text-executive-500 hover:text-executive-900 focus-visible:ring-transparent;
+  }
+
+  .card {
+    @apply rounded-[28px] border border-white/60 bg-white/85 p-6 shadow-executive backdrop-blur;
+  }
+
+  .input {
+    @apply w-full rounded-2xl border border-transparent bg-white/80 px-4 py-2.5 text-sm text-executive-700 shadow-inner transition focus:border-primary-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-100;
+  }
+
+  .label {
+    @apply block text-xs font-semibold uppercase tracking-[0.3em] text-executive-400;
+  }
+}
+
+@layer utilities {
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .animate-slideUp {
+    animation: slideUp 0.6s ease-out;
+  }
+  
+  .animate-scaleIn {
+    animation: scaleIn 0.4s ease-out;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

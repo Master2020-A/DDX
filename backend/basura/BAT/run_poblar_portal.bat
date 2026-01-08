@@ -1,0 +1,6 @@
+@echo off
+echo Ejecutando script de poblado del Portal del Paciente...
+python -u poblar_portal_paciente.py
+echo.
+echo Presiona cualquier tecla para cerrar...
+pause > nul

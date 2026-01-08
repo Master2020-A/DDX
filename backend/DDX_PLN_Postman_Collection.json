@@ -1,0 +1,526 @@
+{
+  "info": {
+    "name": "DDX - Módulo PLN",
+    "description": "Colección de endpoints para el módulo de Procesamiento de Lenguaje Natural",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8612/api",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "paciente_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Autenticación",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', jsonData.access_token);",
+                  "    console.log('Token guardado:', jsonData.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@ddx.com\",\n  \"password\": \"tu_password\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "1. Transcripción de Voz",
+      "item": [
+        {
+          "name": "Transcribir Audio (sin extracción)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "archivo",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "paciente_id",
+                  "value": "{{paciente_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "idioma",
+                  "value": "es",
+                  "type": "text"
+                },
+                {
+                  "key": "extraer_informacion",
+                  "value": "false",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/pln/transcribir-audio",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "transcribir-audio"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Transcribir Audio (con extracción)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "archivo",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "paciente_id",
+                  "value": "{{paciente_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "idioma",
+                  "value": "es",
+                  "type": "text"
+                },
+                {
+                  "key": "extraer_informacion",
+                  "value": "true",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/pln/transcribir-audio",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "transcribir-audio"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Transcripciones de Paciente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pln/transcripciones/paciente/{{paciente_id}}?limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "transcripciones", "paciente", "{{paciente_id}}"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Extracción de Información",
+      "item": [
+        {
+          "name": "Extraer de Nota de Evolución",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"texto\": \"Paciente masculino de 45 años con cefalea intensa de 3 días de evolución, acompañada de náuseas y fotofobia. Niega fiebre. Antecedentes de migraña. PA: 120/80 mmHg, FC: 72 lpm, Temp: 36.5°C. Se prescribe Sumatriptán 50mg VO cada 24h por 3 días.\",\n  \"tipo_documento\": \"nota_evolucion\",\n  \"paciente_id\": \"{{paciente_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pln/extraer-informacion",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "extraer-informacion"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Extraer de Receta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"texto\": \"Rx: Amoxicilina 500mg VO cada 8 horas por 7 días. Paracetamol 500mg VO cada 6 horas PRN dolor. Omeprazol 20mg VO cada 24 horas en ayunas por 14 días.\",\n  \"tipo_documento\": \"receta\",\n  \"paciente_id\": \"{{paciente_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pln/extraer-informacion",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "extraer-informacion"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Extraer Entidades Nombradas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"texto\": \"Paciente con diabetes mellitus tipo 2 en tratamiento con metformina. Presenta hipertensión arterial controlada con enalapril.\",\n  \"paciente_id\": \"{{paciente_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pln/extraer-entidades",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "extraer-entidades"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Generación de Resúmenes",
+      "item": [
+        {
+          "name": "Resumen Completo (90 días)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente_id\": \"{{paciente_id}}\",\n  \"tipo_resumen\": \"completo\",\n  \"periodo_dias\": 90,\n  \"incluir_consultas\": true,\n  \"incluir_laboratorios\": true,\n  \"incluir_imagenes\": true,\n  \"incluir_medicamentos\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pln/generar-resumen",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "generar-resumen"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resumen Ejecutivo (30 días)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente_id\": \"{{paciente_id}}\",\n  \"tipo_resumen\": \"ejecutivo\",\n  \"periodo_dias\": 30,\n  \"incluir_consultas\": true,\n  \"incluir_laboratorios\": true,\n  \"incluir_imagenes\": false,\n  \"incluir_medicamentos\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pln/generar-resumen",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "generar-resumen"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resumen por Problema",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente_id\": \"{{paciente_id}}\",\n  \"tipo_resumen\": \"por_problema\",\n  \"periodo_dias\": 180,\n  \"problema_especifico\": \"Hipertensión arterial\",\n  \"incluir_consultas\": true,\n  \"incluir_laboratorios\": true,\n  \"incluir_imagenes\": true,\n  \"incluir_medicamentos\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pln/generar-resumen",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "generar-resumen"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Resúmenes de Paciente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pln/resumenes/paciente/{{paciente_id}}?limit=5",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "resumenes", "paciente", "{{paciente_id}}"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Traducción Médica",
+      "item": [
+        {
+          "name": "Traducir Término al Inglés",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"texto\": \"Hipertensión arterial esencial\",\n  \"idioma_origen\": \"es\",\n  \"idioma_destino\": \"en\",\n  \"tipo_contenido\": \"diagnostico\",\n  \"especialidad\": \"cardiologia\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pln/traducir",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "traducir"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Traducir Instrucciones al Portugués",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"texto\": \"Tomar 1 comprimido cada 8 horas después de las comidas\",\n  \"idioma_origen\": \"es\",\n  \"idioma_destino\": \"pt\",\n  \"tipo_contenido\": \"instrucciones\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pln/traducir",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "traducir"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Traducir Informe al Francés",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"texto\": \"Paciente con dolor torácico de características anginosas. Se solicita electrocardiograma y troponinas.\",\n  \"idioma_origen\": \"es\",\n  \"idioma_destino\": \"fr\",\n  \"tipo_contenido\": \"informe_clinico\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pln/traducir",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "traducir"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Traducir Documento Completo",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "archivo",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "idioma_origen",
+                  "value": "es",
+                  "type": "text"
+                },
+                {
+                  "key": "idioma_destino",
+                  "value": "en",
+                  "type": "text"
+                },
+                {
+                  "key": "tipo_documento",
+                  "value": "informe_clinico",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/pln/traducir-documento",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "traducir-documento"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Diccionario Médico",
+      "item": [
+        {
+          "name": "Agregar Término",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"termino_es\": \"Cefalea\",\n  \"termino_en\": \"Headache\",\n  \"termino_la\": \"Cephalgia\",\n  \"categoria\": \"sintoma\",\n  \"especialidad\": \"neurologia\",\n  \"definicion\": \"Dolor de cabeza de cualquier intensidad\",\n  \"sinonimos\": [\"Dolor de cabeza\", \"Jaqueca\"],\n  \"uso_comun\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pln/diccionario/agregar",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "diccionario", "agregar"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Término",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pln/diccionario/buscar?termino=cefalea",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "diccionario", "buscar"],
+              "query": [
+                {
+                  "key": "termino",
+                  "value": "cefalea"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar por Categoría",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pln/diccionario/categoria/sintoma?limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["pln", "diccionario", "categoria", "sintoma"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "9. Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/pln/health",
+          "host": ["{{base_url}}"],
+          "path": ["pln", "health"]
+        }
+      },
+      "response": []
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+# Database
+DATABASE_URL=postgresql+asyncpg://postgres:password@localhost:5432/ddx_db
+
+# Security
+SECRET_KEY=your-secret-key-here-change-in-production
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# Application
+APP_NAME=Sistema de Gestión Clínica DDX
+DEBUG=True
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
+
+# File Storage
+UPLOAD_DIR=./uploads
+MAX_UPLOAD_SIZE=10485760  # 10MB
